@@ -1,0 +1,29 @@
+# ---------- Query and Mutation ----------
+type Query {
+  Users: [UserDetail!]!
+  User(ID: ID!): UserDetail!
+}
+
+type Mutation {
+  UserCreate(params: UserCreateInput!): UserDetail!
+  UserUpdate(params: UserUpdateInput!): UserDetail!
+}
+
+# ---------- Response Type ----------
+type UserDetail {
+  ID: ID!
+  name: String!
+  email: String!
+}
+
+# ---------- Params Type ----------
+input UserCreateInput {
+  name: String!
+  email: String!
+}
+
+input UserUpdateInput {
+  ID: ID!
+  name: String!
+  email: String!
+}
