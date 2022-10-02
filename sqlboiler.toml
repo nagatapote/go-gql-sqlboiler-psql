@@ -1,0 +1,12 @@
+output   = "domain/models"
+no-tests = true
+
+[psql]
+  dbname = "go_dev"
+  host   = "db"
+  port   = 5432
+  user   = "postgres"
+  pass   = "postgres"
+  schema = "public"
+  sslmode = "disable"
+  blacklist = []

@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: ./
+      dockerfile: ./dev.Dockerfile
+    env_file:
+      - ./.env-docker
+    ports:
+      - "8000:8000"
+    command:
+      - air
+    volumes:
+      - .:/go/go-gql-sqlboiler-psql
+    depends_on:
+      - db
+    networks:
+      - go-dev-api-network
+
+  db:
+    image: postgres:13.1-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=go_dev
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - go-dev-api-network
+
+volumes:
+  psql_data:
+
+networks:
+  go-dev-api-network:
+    external: true
