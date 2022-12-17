@@ -6,6 +6,7 @@ import (
 	"go-gql-sqlboiler-psql/infrastructure/db"
 	"go-gql-sqlboiler-psql/usecase/repository"
 
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
@@ -29,4 +30,8 @@ func (r *userRepositoryImpl) Fetch(ctx context.Context, id int64) (*models.User,
 		qm.Where("id = ? and deleted_at is null", id),
 	).One(ctx, r.DbUtils.GetDao(ctx))
 	return result, r.DbUtils.Error(err)
+}
+
+func (r *userRepositoryImpl) Create(ctx context.Context, user *models.User) error {
+	return r.DbUtils.Error(user.Insert(ctx, r.DbUtils.GetDao(ctx), boil.Infer()))
 }
