@@ -18,6 +18,10 @@ func (r *mutationResolver) UserUpdate(ctx context.Context, params graphql1.UserU
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) UserDelete(ctx context.Context, id int64) (*graphql1.ClientDeleteResult, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Users(ctx context.Context) ([]*graphql1.UserDetail, error) {
 	panic(fmt.Errorf("not implemented"))
 }
