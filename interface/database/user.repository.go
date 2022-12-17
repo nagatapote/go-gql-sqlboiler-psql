@@ -5,6 +5,7 @@ import (
 	"go-gql-sqlboiler-psql/domain/models"
 	"go-gql-sqlboiler-psql/infrastructure/db"
 	"go-gql-sqlboiler-psql/usecase/repository"
+	"time"
 
 	"github.com/friendsofgo/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -43,6 +44,20 @@ func (r *userRepositoryImpl) Update(ctx context.Context, user *models.User, colu
 		return r.DbUtils.Error(err)
 	} else if cnt != 1 {
 		return errors.Errorf("update count = %d", cnt)
+	}
+	return r.DbUtils.Error(err)
+}
+
+func (r *userRepositoryImpl) Delete(ctx context.Context, id int64) error {
+	cnt, err := models.Users(
+		qm.Where("id = ? and deleted_at is null", id),
+	).UpdateAll(ctx, r.DbUtils.GetDao(ctx), models.M{
+		"deleted_at": time.Now(),
+	})
+	if err != nil {
+		return r.DbUtils.Error(err)
+	} else if cnt != 1 {
+		return errors.Errorf("delete count = %d", cnt)
 	}
 	return r.DbUtils.Error(err)
 }
