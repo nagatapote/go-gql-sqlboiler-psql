@@ -7,7 +7,7 @@ type Query {
 type Mutation {
   UserCreate(params: UserCreateInput!): UserDetail!
   UserUpdate(params: UserUpdateInput!): UserDetail!
-  UserDelete(ID: ID!): ClientDeleteResult!
+  UserDelete(ID: ID!): UserDeleteResult!
 }
 
 # ---------- Response Type ----------
@@ -17,7 +17,7 @@ type UserDetail {
   email: String!
 }
 
-type ClientDeleteResult {
+type UserDeleteResult {
   result: Boolean!
 }
 
