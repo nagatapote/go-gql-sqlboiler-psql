@@ -45,3 +45,15 @@ func (u *userUseCaseImpl) Fetch(ctx context.Context, id int64) (*graphql.UserDet
 	}
 	return u.converter.UserModelToUserDetail(m)
 }
+
+func(u *userUseCaseImpl) Create(ctx context.Context, input graphql.UserCreateInput) (*graphql.UserDetail, error) {
+	m, err := u.converter.UserCreateInputToUserModel(input)
+	if err != nil {
+		return nil, err
+	}
+	if err := u.repository.Create(ctx, m); err != nil {
+		return nil, err
+	}
+	return u.converter.UserModelToUserDetail(m)
+}
+
