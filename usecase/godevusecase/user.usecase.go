@@ -16,9 +16,9 @@ type userUseCaseImpl struct {
 type UserUseCase interface {
 	FetchAll(context.Context) ([]*graphql.UserDetail, error)
 	Fetch(context.Context, int64) (*graphql.UserDetail, error)
-	Create(context.Context, *graphql.UserDetail) error
-	Update(context.Context, *graphql.UserDetail, []string) error
-	Delete(context.Context, int64) error
+	Create(context.Context, graphql.UserCreateInput) (*graphql.UserDetail, error)
+	Update(context.Context, graphql.UserCreateInput) (*graphql.UserDetail, error)
+	Delete(context.Context, int64) (*graphql.UserDeleteResult, error)
 }
 
 func NewUserUseCase(repository repository.UserRepository, converter converter.UserConverter) UserUseCase {
@@ -67,4 +67,17 @@ func(u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserCreateInp
 		return nil, err
 	}
 	return u.converter.UserModelToUserDetail(m)
+}
+
+func (u *userUseCaseImpl) Delete(ctx context.Context, id int64) (*graphql.UserDeleteResult, error) {
+	m, err := u.repository.Fetch(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if err := u.repository.Delete(ctx, id); err != nil {
+		return nil, err
+	}
+	return &graphql.UserDeleteResult{
+		Result: true,
+	}, nil
 }
