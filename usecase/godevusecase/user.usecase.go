@@ -70,10 +70,6 @@ func(u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserCreateInp
 }
 
 func (u *userUseCaseImpl) Delete(ctx context.Context, id int64) (*graphql.UserDeleteResult, error) {
-	m, err := u.repository.Fetch(ctx, id)
-	if err != nil {
-		return nil, err
-	}
 	if err := u.repository.Delete(ctx, id); err != nil {
 		return nil, err
 	}
