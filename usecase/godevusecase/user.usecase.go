@@ -14,6 +14,10 @@ type userUseCaseImpl struct {
 
 type UserUseCase interface {
 	FetchAll(context.Context) ([]*graphql.UserDetail, error)
+	Fetch(context.Context, int64) (*graphql.UserDetail, error)
+	Create(context.Context, *graphql.UserDetail) error
+	Update(context.Context, *graphql.UserDetail, []string) error
+	Delete(context.Context, int64) error
 }
 
 func NewUserUseCase(repository repository.UserRepository, converter converter.UserConverter) UserUseCase {
