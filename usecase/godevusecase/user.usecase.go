@@ -2,6 +2,7 @@ package godevusecase
 
 import (
 	"context"
+	"fmt"
 	"go-gql-sqlboiler-psql/domain/models/graphql"
 	"go-gql-sqlboiler-psql/usecase/converter"
 	"go-gql-sqlboiler-psql/usecase/repository"
@@ -33,4 +34,14 @@ func (u *userUseCaseImpl) FetchAll(ctx context.Context) ([]*graphql.UserDetail, 
 		return nil, err
 	}
 	return u.converter.UserModelsToUserDetails(ms)
+}
+
+func (u *userUseCaseImpl) Fetch(ctx context.Context, id int64) (*graphql.UserDetail, error) {
+	m, err := u.repository.Fetch(ctx, id)
+	if err != nil {
+		return nil, err
+	} else if m == nil {
+			return nil, fmt.Errorf("user not found id = %d", id)
+	}
+	return u.converter.UserModelToUserDetail(m)
 }
