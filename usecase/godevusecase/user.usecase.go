@@ -57,3 +57,14 @@ func(u *userUseCaseImpl) Create(ctx context.Context, input graphql.UserCreateInp
 	return u.converter.UserModelToUserDetail(m)
 }
 
+func(u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserCreateInput) (*graphql.UserDetail, error) {
+	m, err := u.converter.UserCreateInputToUserModel(input)
+	if err != nil {
+		return nil, err
+	}
+	columns := u.converter.ConvertUpdateInputToDBColumnNames()
+	if err := u.repository.Update(ctx, m, columns); err != nil {
+		return nil, err
+	}
+	return u.converter.UserModelToUserDetail(m)
+}
