@@ -17,7 +17,7 @@ type UserUseCase interface {
 	FetchAll(context.Context) ([]*graphql.UserDetail, error)
 	Fetch(context.Context, int64) (*graphql.UserDetail, error)
 	Create(context.Context, graphql.UserCreateInput) (*graphql.UserDetail, error)
-	Update(context.Context, graphql.UserCreateInput) (*graphql.UserDetail, error)
+	Update(context.Context, graphql.UserUpdateInput) (*graphql.UserDetail, error)
 	Delete(context.Context, int64) (*graphql.UserDeleteResult, error)
 }
 
@@ -57,8 +57,8 @@ func(u *userUseCaseImpl) Create(ctx context.Context, input graphql.UserCreateInp
 	return u.converter.UserModelToUserDetail(m)
 }
 
-func(u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserCreateInput) (*graphql.UserDetail, error) {
-	m, err := u.converter.UserCreateInputToUserModel(input)
+func(u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserUpdateInput) (*graphql.UserDetail, error) {
+	m, err := u.converter.UserUpdateInputToUserModel(input)
 	if err != nil {
 		return nil, err
 	}
