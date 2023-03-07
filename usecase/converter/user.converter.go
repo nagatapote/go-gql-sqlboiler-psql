@@ -53,7 +53,9 @@ func (c *userConverterImpl) UserModelToUserDetail(m *models.User) (*graphql.User
 func (c *userConverterImpl) UserCreateInputToUserModel(input graphql.UserCreateInput) (*models.User, error) {
 	var jobID null.Int64
 	if input.JobID != nil {
-		jobID = null.Int64From(*input.JobID)
+		jobID.Int64 = *input.JobID
+		// null許容
+		jobID.Valid = false
 	}
 	return &models.User{
 		Name:  input.Name,
@@ -65,7 +67,9 @@ func (c *userConverterImpl) UserCreateInputToUserModel(input graphql.UserCreateI
 func (c *userConverterImpl) UserUpdateInputToUserModel(input graphql.UserUpdateInput) (*models.User, error) {
 	var jobID null.Int64
 	if input.JobID != nil {
-		jobID = null.Int64From(*input.JobID)
+		jobID.Int64 = *input.JobID
+		// null許容
+		jobID.Valid = false
 	}
 	return &models.User{
 		ID:    input.ID,
