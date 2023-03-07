@@ -9,8 +9,8 @@ import (
 )
 
 type userUseCaseImpl struct {
-	repository         repository.UserRepository
-	converter          converter.UserConverter
+	repository repository.UserRepository
+	converter  converter.UserConverter
 }
 
 type UserUseCase interface {
@@ -23,8 +23,8 @@ type UserUseCase interface {
 
 func NewUserUseCase(repository repository.UserRepository, converter converter.UserConverter) UserUseCase {
 	return &userUseCaseImpl{
-		repository:         repository,
-		converter:          converter,
+		repository: repository,
+		converter:  converter,
 	}
 }
 
@@ -41,12 +41,12 @@ func (u *userUseCaseImpl) Fetch(ctx context.Context, id int64) (*graphql.UserDet
 	if err != nil {
 		return nil, err
 	} else if m == nil {
-			return nil, fmt.Errorf("user not found id = %d", id)
+		return nil, fmt.Errorf("user not found id = %d", id)
 	}
 	return u.converter.UserModelToUserDetail(m)
 }
 
-func(u *userUseCaseImpl) Create(ctx context.Context, input graphql.UserCreateInput) (*graphql.UserDetail, error) {
+func (u *userUseCaseImpl) Create(ctx context.Context, input graphql.UserCreateInput) (*graphql.UserDetail, error) {
 	m, err := u.converter.UserCreateInputToUserModel(input)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func(u *userUseCaseImpl) Create(ctx context.Context, input graphql.UserCreateInp
 	return u.converter.UserModelToUserDetail(m)
 }
 
-func(u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserUpdateInput) (*graphql.UserDetail, error) {
+func (u *userUseCaseImpl) Update(ctx context.Context, input graphql.UserUpdateInput) (*graphql.UserDetail, error) {
 	m, err := u.converter.UserUpdateInputToUserModel(input)
 	if err != nil {
 		return nil, err

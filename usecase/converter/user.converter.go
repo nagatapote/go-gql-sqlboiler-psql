@@ -43,10 +43,10 @@ func (c *userConverterImpl) UserModelToUserDetail(m *models.User) (*graphql.User
 		job = nil
 	}
 	return &graphql.UserDetail{
-		ID:                         m.ID,
-		Name:                       m.Name,
-		Email:                      m.Email,
-		Job: 						job,
+		ID:    m.ID,
+		Name:  m.Name,
+		Email: m.Email,
+		Job:   job,
 	}, nil
 }
 
@@ -56,9 +56,9 @@ func (c *userConverterImpl) UserCreateInputToUserModel(input graphql.UserCreateI
 		jobID = null.Int64From(*input.JobID)
 	}
 	return &models.User{
-		Name:                       input.Name,
-		Email:                      input.Email,
-		JobID: 						jobID,
+		Name:  input.Name,
+		Email: input.Email,
+		JobID: jobID,
 	}, nil
 }
 
@@ -68,10 +68,10 @@ func (c *userConverterImpl) UserUpdateInputToUserModel(input graphql.UserUpdateI
 		jobID = null.Int64From(*input.JobID)
 	}
 	return &models.User{
-		ID:                         input.ID,
-		Name:                       input.Name,
-		Email:                      input.Email,
-		JobID: 						jobID,
+		ID:    input.ID,
+		Name:  input.Name,
+		Email: input.Email,
+		JobID: jobID,
 	}, nil
 }
 
