@@ -1,6 +1,6 @@
 
 -- +migrate Up
-alter table users add column jobs_id bigint references jobs(id);
+alter table users add column job_id bigint references jobs(id);
 
 -- +migrate Down
-alter table users drop column jobs_id;
+alter table users drop column job_id;

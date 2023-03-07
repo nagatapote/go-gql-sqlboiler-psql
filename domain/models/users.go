@@ -30,7 +30,7 @@ type User struct {
 	DeletedAt null.Time  `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
 	Name      string     `boil:"name" json:"name" toml:"name" yaml:"name"`
 	Email     string     `boil:"email" json:"email" toml:"email" yaml:"email"`
-	JobsID    null.Int64 `boil:"jobs_id" json:"jobs_id,omitempty" toml:"jobs_id" yaml:"jobs_id,omitempty"`
+	JobID     null.Int64 `boil:"job_id" json:"job_id,omitempty" toml:"job_id" yaml:"job_id,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -43,7 +43,7 @@ var UserColumns = struct {
 	DeletedAt string
 	Name      string
 	Email     string
-	JobsID    string
+	JobID     string
 }{
 	ID:        "id",
 	CreatedAt: "created_at",
@@ -51,7 +51,7 @@ var UserColumns = struct {
 	DeletedAt: "deleted_at",
 	Name:      "name",
 	Email:     "email",
-	JobsID:    "jobs_id",
+	JobID:     "job_id",
 }
 
 var UserTableColumns = struct {
@@ -61,7 +61,7 @@ var UserTableColumns = struct {
 	DeletedAt string
 	Name      string
 	Email     string
-	JobsID    string
+	JobID     string
 }{
 	ID:        "users.id",
 	CreatedAt: "users.created_at",
@@ -69,7 +69,7 @@ var UserTableColumns = struct {
 	DeletedAt: "users.deleted_at",
 	Name:      "users.name",
 	Email:     "users.email",
-	JobsID:    "users.jobs_id",
+	JobID:     "users.job_id",
 }
 
 // Generated where
@@ -119,7 +119,7 @@ var UserWhere = struct {
 	DeletedAt whereHelpernull_Time
 	Name      whereHelperstring
 	Email     whereHelperstring
-	JobsID    whereHelpernull_Int64
+	JobID     whereHelpernull_Int64
 }{
 	ID:        whereHelperint64{field: "\"users\".\"id\""},
 	CreatedAt: whereHelpertime_Time{field: "\"users\".\"created_at\""},
@@ -127,7 +127,7 @@ var UserWhere = struct {
 	DeletedAt: whereHelpernull_Time{field: "\"users\".\"deleted_at\""},
 	Name:      whereHelperstring{field: "\"users\".\"name\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
-	JobsID:    whereHelpernull_Int64{field: "\"users\".\"jobs_id\""},
+	JobID:     whereHelpernull_Int64{field: "\"users\".\"job_id\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -158,9 +158,9 @@ func (r *userR) GetJob() *Job {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "created_at", "updated_at", "deleted_at", "name", "email", "jobs_id"}
+	userAllColumns            = []string{"id", "created_at", "updated_at", "deleted_at", "name", "email", "job_id"}
 	userColumnsWithoutDefault = []string{"name", "email"}
-	userColumnsWithDefault    = []string{"id", "created_at", "updated_at", "deleted_at", "jobs_id"}
+	userColumnsWithDefault    = []string{"id", "created_at", "updated_at", "deleted_at", "job_id"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )
@@ -446,7 +446,7 @@ func (q userQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 // Job pointed to by the foreign key.
 func (o *User) Job(mods ...qm.QueryMod) jobQuery {
 	queryMods := []qm.QueryMod{
-		qm.Where("\"id\" = ?", o.JobsID),
+		qm.Where("\"id\" = ?", o.JobID),
 	}
 
 	queryMods = append(queryMods, mods...)
@@ -487,8 +487,8 @@ func (userL) LoadJob(ctx context.Context, e boil.ContextExecutor, singular bool,
 		if object.R == nil {
 			object.R = &userR{}
 		}
-		if !queries.IsNil(object.JobsID) {
-			args = append(args, object.JobsID)
+		if !queries.IsNil(object.JobID) {
+			args = append(args, object.JobID)
 		}
 
 	} else {
@@ -499,13 +499,13 @@ func (userL) LoadJob(ctx context.Context, e boil.ContextExecutor, singular bool,
 			}
 
 			for _, a := range args {
-				if queries.Equal(a, obj.JobsID) {
+				if queries.Equal(a, obj.JobID) {
 					continue Outer
 				}
 			}
 
-			if !queries.IsNil(obj.JobsID) {
-				args = append(args, obj.JobsID)
+			if !queries.IsNil(obj.JobID) {
+				args = append(args, obj.JobID)
 			}
 
 		}
@@ -564,7 +564,7 @@ func (userL) LoadJob(ctx context.Context, e boil.ContextExecutor, singular bool,
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if queries.Equal(local.JobsID, foreign.ID) {
+			if queries.Equal(local.JobID, foreign.ID) {
 				local.R.Job = foreign
 				if foreign.R == nil {
 					foreign.R = &jobR{}
@@ -591,7 +591,7 @@ func (o *User) SetJob(ctx context.Context, exec boil.ContextExecutor, insert boo
 
 	updateQuery := fmt.Sprintf(
 		"UPDATE \"users\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"jobs_id"}),
+		strmangle.SetParamNames("\"", "\"", 1, []string{"job_id"}),
 		strmangle.WhereClause("\"", "\"", 2, userPrimaryKeyColumns),
 	)
 	values := []interface{}{related.ID, o.ID}
@@ -605,7 +605,7 @@ func (o *User) SetJob(ctx context.Context, exec boil.ContextExecutor, insert boo
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	queries.Assign(&o.JobsID, related.ID)
+	queries.Assign(&o.JobID, related.ID)
 	if o.R == nil {
 		o.R = &userR{
 			Job: related,
@@ -631,8 +631,8 @@ func (o *User) SetJob(ctx context.Context, exec boil.ContextExecutor, insert boo
 func (o *User) RemoveJob(ctx context.Context, exec boil.ContextExecutor, related *Job) error {
 	var err error
 
-	queries.SetScanner(&o.JobsID, nil)
-	if _, err = o.Update(ctx, exec, boil.Whitelist("jobs_id")); err != nil {
+	queries.SetScanner(&o.JobID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("job_id")); err != nil {
 		return errors.Wrap(err, "failed to update local table")
 	}
 
@@ -644,7 +644,7 @@ func (o *User) RemoveJob(ctx context.Context, exec boil.ContextExecutor, related
 	}
 
 	for i, ri := range related.R.Users {
-		if queries.Equal(o.JobsID, ri.JobsID) {
+		if queries.Equal(o.JobID, ri.JobID) {
 			continue
 		}
 

@@ -4,6 +4,8 @@ import (
 	"go-gql-sqlboiler-psql/domain/models"
 	"go-gql-sqlboiler-psql/domain/models/graphql"
 	"go-gql-sqlboiler-psql/utils"
+
+	"github.com/volatiletech/null/v8"
 )
 
 type userConverterImpl struct {
@@ -34,25 +36,42 @@ func (c *userConverterImpl) UserModelsToUserDetails(ms []*models.User) ([]*graph
 }
 
 func (c *userConverterImpl) UserModelToUserDetail(m *models.User) (*graphql.UserDetail, error) {
+	job := &graphql.JobDetail{}
+	if m.JobID.Valid {
+		job.Name = m.R.Job.Name
+	} else {
+		job = nil
+	}
 	return &graphql.UserDetail{
 		ID:                         m.ID,
 		Name:                       m.Name,
 		Email:                      m.Email,
+		Job: 						job,
 	}, nil
 }
 
 func (c *userConverterImpl) UserCreateInputToUserModel(input graphql.UserCreateInput) (*models.User, error) {
+	var jobID null.Int64
+	if input.JobID != nil {
+		jobID = null.Int64From(*input.JobID)
+	}
 	return &models.User{
 		Name:                       input.Name,
 		Email:                      input.Email,
+		JobID: 						jobID,
 	}, nil
 }
 
 func (c *userConverterImpl) UserUpdateInputToUserModel(input graphql.UserUpdateInput) (*models.User, error) {
+	var jobID null.Int64
+	if input.JobID != nil {
+		jobID = null.Int64From(*input.JobID)
+	}
 	return &models.User{
 		ID:                         input.ID,
 		Name:                       input.Name,
 		Email:                      input.Email,
+		JobID: 						jobID,
 	}, nil
 }
 

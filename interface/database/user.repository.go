@@ -23,13 +23,14 @@ func NewUserRepository(dbUtils db.DbUtils) repository.UserRepository {
 }
 
 func (r *userRepositoryImpl) FetchAll(ctx context.Context) ([]*models.User, error) {
-	results, err := models.Users().All(ctx, r.DbUtils.GetDao(ctx))
+	results, err := models.Users(qm.Load("Job")).All(ctx, r.DbUtils.GetDao(ctx))
 	return results, r.DbUtils.Error(err)
 }
 
 func (r *userRepositoryImpl) Fetch(ctx context.Context, id int64) (*models.User, error) {
 	result, err := models.Users(
 		qm.Where("id = ? and deleted_at is null", id),
+		qm.Load("Job"),
 	).One(ctx, r.DbUtils.GetDao(ctx))
 	return result, r.DbUtils.Error(err)
 }

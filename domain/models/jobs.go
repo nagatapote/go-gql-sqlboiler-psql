@@ -443,7 +443,7 @@ func (o *Job) Users(mods ...qm.QueryMod) userQuery {
 	}
 
 	queryMods = append(queryMods,
-		qm.Where("\"users\".\"jobs_id\"=?", o.ID),
+		qm.Where("\"users\".\"job_id\"=?", o.ID),
 	)
 
 	return Users(queryMods...)
@@ -506,7 +506,7 @@ func (jobL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular bool
 
 	query := NewQuery(
 		qm.From(`users`),
-		qm.WhereIn(`users.jobs_id in ?`, args...),
+		qm.WhereIn(`users.job_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -549,7 +549,7 @@ func (jobL) LoadUsers(ctx context.Context, e boil.ContextExecutor, singular bool
 
 	for _, foreign := range resultSlice {
 		for _, local := range slice {
-			if queries.Equal(local.ID, foreign.JobsID) {
+			if queries.Equal(local.ID, foreign.JobID) {
 				local.R.Users = append(local.R.Users, foreign)
 				if foreign.R == nil {
 					foreign.R = &userR{}
@@ -571,14 +571,14 @@ func (o *Job) AddUsers(ctx context.Context, exec boil.ContextExecutor, insert bo
 	var err error
 	for _, rel := range related {
 		if insert {
-			queries.Assign(&rel.JobsID, o.ID)
+			queries.Assign(&rel.JobID, o.ID)
 			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
 				return errors.Wrap(err, "failed to insert into foreign table")
 			}
 		} else {
 			updateQuery := fmt.Sprintf(
 				"UPDATE \"users\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"jobs_id"}),
+				strmangle.SetParamNames("\"", "\"", 1, []string{"job_id"}),
 				strmangle.WhereClause("\"", "\"", 2, userPrimaryKeyColumns),
 			)
 			values := []interface{}{o.ID, rel.ID}
@@ -592,7 +592,7 @@ func (o *Job) AddUsers(ctx context.Context, exec boil.ContextExecutor, insert bo
 				return errors.Wrap(err, "failed to update foreign table")
 			}
 
-			queries.Assign(&rel.JobsID, o.ID)
+			queries.Assign(&rel.JobID, o.ID)
 		}
 	}
 
@@ -623,7 +623,7 @@ func (o *Job) AddUsers(ctx context.Context, exec boil.ContextExecutor, insert bo
 // Replaces o.R.Users with related.
 // Sets related.R.Job's Users accordingly.
 func (o *Job) SetUsers(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*User) error {
-	query := "update \"users\" set \"jobs_id\" = null where \"jobs_id\" = $1"
+	query := "update \"users\" set \"job_id\" = null where \"job_id\" = $1"
 	values := []interface{}{o.ID}
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -637,7 +637,7 @@ func (o *Job) SetUsers(ctx context.Context, exec boil.ContextExecutor, insert bo
 
 	if o.R != nil {
 		for _, rel := range o.R.Users {
-			queries.SetScanner(&rel.JobsID, nil)
+			queries.SetScanner(&rel.JobID, nil)
 			if rel.R == nil {
 				continue
 			}
@@ -660,11 +660,11 @@ func (o *Job) RemoveUsers(ctx context.Context, exec boil.ContextExecutor, relate
 
 	var err error
 	for _, rel := range related {
-		queries.SetScanner(&rel.JobsID, nil)
+		queries.SetScanner(&rel.JobID, nil)
 		if rel.R != nil {
 			rel.R.Job = nil
 		}
-		if _, err = rel.Update(ctx, exec, boil.Whitelist("jobs_id")); err != nil {
+		if _, err = rel.Update(ctx, exec, boil.Whitelist("job_id")); err != nil {
 			return err
 		}
 	}

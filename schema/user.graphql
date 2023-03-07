@@ -15,6 +15,7 @@ type UserDetail {
   ID: ID!
   name: String!
   email: String!
+  job: JobDetail
 }
 
 type UserDeleteResult {
@@ -25,10 +26,12 @@ type UserDeleteResult {
 input UserCreateInput {
   name: String!
   email: String!
+  jobID: ID
 }
 
 input UserUpdateInput {
   ID: ID!
   name: String!
   email: String!
+  jobID: ID
 }
