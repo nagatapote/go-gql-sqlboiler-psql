@@ -6,6 +6,6 @@ type AppConverters struct {
 
 func NewAppConverters() *AppConverters {
 	return &AppConverters{
-		UserConverter:                NewUserConverter(),
+		UserConverter: NewUserConverter(),
 	}
 }

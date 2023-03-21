@@ -11,6 +11,6 @@ type AppRepositories struct {
 
 func NewAppRepositories(dbUtil db.DbUtils) *AppRepositories {
 	return &AppRepositories{
-		UserRepository:                NewUserRepository(dbUtil),
+		UserRepository: NewUserRepository(dbUtil),
 	}
 }

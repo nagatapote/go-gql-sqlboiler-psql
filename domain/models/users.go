@@ -24,12 +24,13 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
-	DeletedAt null.Time `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
-	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
+	ID        int64      `boil:"id" json:"id" toml:"id" yaml:"id"`
+	CreatedAt time.Time  `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time  `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	DeletedAt null.Time  `boil:"deleted_at" json:"deleted_at,omitempty" toml:"deleted_at" yaml:"deleted_at,omitempty"`
+	Name      string     `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Email     string     `boil:"email" json:"email" toml:"email" yaml:"email"`
+	JobID     null.Int64 `boil:"job_id" json:"job_id,omitempty" toml:"job_id" yaml:"job_id,omitempty"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -42,6 +43,7 @@ var UserColumns = struct {
 	DeletedAt string
 	Name      string
 	Email     string
+	JobID     string
 }{
 	ID:        "id",
 	CreatedAt: "created_at",
@@ -49,6 +51,7 @@ var UserColumns = struct {
 	DeletedAt: "deleted_at",
 	Name:      "name",
 	Email:     "email",
+	JobID:     "job_id",
 }
 
 var UserTableColumns = struct {
@@ -58,6 +61,7 @@ var UserTableColumns = struct {
 	DeletedAt string
 	Name      string
 	Email     string
+	JobID     string
 }{
 	ID:        "users.id",
 	CreatedAt: "users.created_at",
@@ -65,26 +69,39 @@ var UserTableColumns = struct {
 	DeletedAt: "users.deleted_at",
 	Name:      "users.name",
 	Email:     "users.email",
+	JobID:     "users.job_id",
 }
 
 // Generated where
 
-type whereHelperint64 struct{ field string }
+type whereHelpernull_Int64 struct{ field string }
 
-func (w whereHelperint64) EQ(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperint64) NEQ(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperint64) LT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperint64) LTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperint64) GT(x int64) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperint64) GTE(x int64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperint64) IN(slice []int64) qm.QueryMod {
+func (w whereHelpernull_Int64) EQ(x null.Int64) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Int64) NEQ(x null.Int64) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Int64) LT(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Int64) LTE(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Int64) GT(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Int64) GTE(x null.Int64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelpernull_Int64) IN(slice []int64) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
 	}
 	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
 }
-func (w whereHelperint64) NIN(slice []int64) qm.QueryMod {
+func (w whereHelpernull_Int64) NIN(slice []int64) qm.QueryMod {
 	values := make([]interface{}, 0, len(slice))
 	for _, value := range slice {
 		values = append(values, value)
@@ -92,26 +109,8 @@ func (w whereHelperint64) NIN(slice []int64) qm.QueryMod {
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
-type whereHelpertime_Time struct{ field string }
-
-func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.NEQ, x)
-}
-func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LT, x)
-}
-func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.LTE, x)
-}
-func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GT, x)
-}
-func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.GTE, x)
-}
+func (w whereHelpernull_Int64) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Int64) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var UserWhere = struct {
 	ID        whereHelperint64
@@ -120,6 +119,7 @@ var UserWhere = struct {
 	DeletedAt whereHelpernull_Time
 	Name      whereHelperstring
 	Email     whereHelperstring
+	JobID     whereHelpernull_Int64
 }{
 	ID:        whereHelperint64{field: "\"users\".\"id\""},
 	CreatedAt: whereHelpertime_Time{field: "\"users\".\"created_at\""},
@@ -127,14 +127,19 @@ var UserWhere = struct {
 	DeletedAt: whereHelpernull_Time{field: "\"users\".\"deleted_at\""},
 	Name:      whereHelperstring{field: "\"users\".\"name\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
+	JobID:     whereHelpernull_Int64{field: "\"users\".\"job_id\""},
 }
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-}{}
+	Job string
+}{
+	Job: "Job",
+}
 
 // userR is where relationships are stored.
 type userR struct {
+	Job *Job `boil:"Job" json:"Job" toml:"Job" yaml:"Job"`
 }
 
 // NewStruct creates a new relationship struct
@@ -142,13 +147,20 @@ func (*userR) NewStruct() *userR {
 	return &userR{}
 }
 
+func (r *userR) GetJob() *Job {
+	if r == nil {
+		return nil
+	}
+	return r.Job
+}
+
 // userL is where Load methods for each relationship are stored.
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "created_at", "updated_at", "deleted_at", "name", "email"}
+	userAllColumns            = []string{"id", "created_at", "updated_at", "deleted_at", "name", "email", "job_id"}
 	userColumnsWithoutDefault = []string{"name", "email"}
-	userColumnsWithDefault    = []string{"id", "created_at", "updated_at", "deleted_at"}
+	userColumnsWithDefault    = []string{"id", "created_at", "updated_at", "deleted_at", "job_id"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )
@@ -429,6 +441,221 @@ func (q userQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	}
 
 	return count > 0, nil
+}
+
+// Job pointed to by the foreign key.
+func (o *User) Job(mods ...qm.QueryMod) jobQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"id\" = ?", o.JobID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	return Jobs(queryMods...)
+}
+
+// LoadJob allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (userL) LoadJob(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		var ok bool
+		object, ok = maybeUser.(*User)
+		if !ok {
+			object = new(User)
+			ok = queries.SetFromEmbeddedStruct(&object, &maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", object, maybeUser))
+			}
+		}
+	} else {
+		s, ok := maybeUser.(*[]*User)
+		if ok {
+			slice = *s
+		} else {
+			ok = queries.SetFromEmbeddedStruct(&slice, maybeUser)
+			if !ok {
+				return errors.New(fmt.Sprintf("failed to set %T from embedded struct %T", slice, maybeUser))
+			}
+		}
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		if !queries.IsNil(object.JobID) {
+			args = append(args, object.JobID)
+		}
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if queries.Equal(a, obj.JobID) {
+					continue Outer
+				}
+			}
+
+			if !queries.IsNil(obj.JobID) {
+				args = append(args, obj.JobID)
+			}
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`jobs`),
+		qm.WhereIn(`jobs.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Job")
+	}
+
+	var resultSlice []*Job
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Job")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for jobs")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for jobs")
+	}
+
+	if len(userAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Job = foreign
+		if foreign.R == nil {
+			foreign.R = &jobR{}
+		}
+		foreign.R.Users = append(foreign.R.Users, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if queries.Equal(local.JobID, foreign.ID) {
+				local.R.Job = foreign
+				if foreign.R == nil {
+					foreign.R = &jobR{}
+				}
+				foreign.R.Users = append(foreign.R.Users, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetJob of the user to the related item.
+// Sets o.R.Job to related.
+// Adds o to related.R.Users.
+func (o *User) SetJob(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Job) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"users\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"job_id"}),
+		strmangle.WhereClause("\"", "\"", 2, userPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	queries.Assign(&o.JobID, related.ID)
+	if o.R == nil {
+		o.R = &userR{
+			Job: related,
+		}
+	} else {
+		o.R.Job = related
+	}
+
+	if related.R == nil {
+		related.R = &jobR{
+			Users: UserSlice{o},
+		}
+	} else {
+		related.R.Users = append(related.R.Users, o)
+	}
+
+	return nil
+}
+
+// RemoveJob relationship.
+// Sets o.R.Job to nil.
+// Removes o from all passed in related items' relationships struct.
+func (o *User) RemoveJob(ctx context.Context, exec boil.ContextExecutor, related *Job) error {
+	var err error
+
+	queries.SetScanner(&o.JobID, nil)
+	if _, err = o.Update(ctx, exec, boil.Whitelist("job_id")); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	if o.R != nil {
+		o.R.Job = nil
+	}
+	if related == nil || related.R == nil {
+		return nil
+	}
+
+	for i, ri := range related.R.Users {
+		if queries.Equal(o.JobID, ri.JobID) {
+			continue
+		}
+
+		ln := len(related.R.Users)
+		if ln > 1 && i < ln-1 {
+			related.R.Users[i] = related.R.Users[ln-1]
+		}
+		related.R.Users = related.R.Users[:ln-1]
+		break
+	}
+	return nil
 }
 
 // Users retrieves all the records using an executor.
